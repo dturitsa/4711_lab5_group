@@ -117,14 +117,16 @@ class Order extends Application
             $item->code = $menuitem->name;
         }
         $this->data['items']   = $items;
-        $this->data['okornot'] = $this->orders->validate($order_num);
+
+        $this->data['okornot'] = $this->orders->validate($order_num)?'active' : 'disabled';
+        
         $this->render();
     }
 
     // proceed with checkout
     public function commit($order_num)
     {
-        if ($this->orders->validate($order_num)) {
+        if (!$this->orders->validate($order_num)) {
             redirect('/order/display_menu/' . $order_num);
         }
 
@@ -138,18 +140,24 @@ class Order extends Application
 
         $this->orders->update($record);
 
+        redirect('/');
+    }
+
+    // cancel the order
+    public function cancel($order_num)
+    {
+
+        $this->orderitems->delete_some($order_num);
+
+        $record = $this->orders->get($order_num);
+
+        $record->status = 'x';
+
+        $this->orders->update($record);
+
         $this->orders->flush($order_num);
 
         redirect('/');
-    }
-    
-    // cancel the order
-    function cancel($order_num) {
-        $this->orderitems->delete_some($order_num);
-        $record = $this->orders->get($order_num);
-        $record->status = 'x'; 
-        $this->orders->update($record);
-        redirect('/');  
     }
 
 }
