@@ -110,7 +110,14 @@ class Order extends Application
         $this->data['total'] = '$' . number_format($this->orders->total($order_num), 2);
         
         $this->data['items'] = $this->orders->details($order_num);
-
+    
+        $items = $this->orderitems->group($order_num);
+        foreach($items as $item){
+            $menuitem = $this->menu->get($item->item);
+            $item->code = $menuitem->name;
+        }
+        $this->data['items'] = $items;
+        $this->data['okornot'] = $this->orders->validate($order_num);
         $this->render();
     }
 
