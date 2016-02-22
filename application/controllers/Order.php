@@ -142,19 +142,14 @@ class Order extends Application
 
         redirect('/');
     }
-
+    
     // cancel the order
-    public function cancel($order_num)
-    {
+    function cancel($order_num) {
         $this->orderitems->delete_some($order_num);
-
         $record = $this->orders->get($order_num);
-
-        $record->status = 'x';
-
+        $record->status = 'x'; 
         $this->orders->update($record);
-
-        redirect('/');
+        redirect('/');  
     }
 
 }
