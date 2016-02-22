@@ -20,20 +20,20 @@ class Order extends Application
     // start a new order
     public function neworder()
     {
-        $order_num        = $this->orders->highest() + 1;
+        $order_num = $this->orders->highest() + 1;
 
-        $neworder         = $this->orders->create();
-        
-        $neworder->num    = $order_num;
-        
-        $neworder->date   = date();
-        
+        $neworder = $this->orders->create();
+
+        $neworder->num = $order_num;
+
+        $neworder->date = date();
+
         $neworder->status = 'a';
-        
-        $neworder->total  = 0;
+
+        $neworder->total = 0;
 
         $this->orders->add($neworder);
-        
+
         redirect('/order/display_menu/' . $order_num);
     }
 
@@ -45,9 +45,12 @@ class Order extends Application
             redirect('/order/neworder');
         }
 
-        $this->data['pagebody']  = 'show_menu';
+        $this->data['pagebody'] = 'show_menu';
+
         $this->data['order_num'] = $order_num;
-        $this->data['title'] = 'Order #' . $order_num;
+
+        $this->data['title'] = "Order # "
+        . ' (' . number_format($this->orders->total($order_num), 2) . ')';
 
         // Make the columns
         $this->data['meals']  = $this->make_column('m');
@@ -91,7 +94,7 @@ class Order extends Application
     // add an item to an order
     public function add($order_num, $item)
     {
-        //FIXME
+        $this->orders->add_item($order_num, $item);
         redirect('/order/display_menu/' . $order_num);
     }
 
@@ -101,7 +104,7 @@ class Order extends Application
         $this->data['title']     = 'Checking Out';
         $this->data['pagebody']  = 'show_order';
         $this->data['order_num'] = $order_num;
-        //FIXME
+        $this->data['items'] = $this->orders->details($order_num);
 
         $this->render();
     }
