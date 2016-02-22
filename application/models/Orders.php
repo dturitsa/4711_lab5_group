@@ -53,35 +53,46 @@ class Orders extends MY_Model
         $CI     = &get_instance();
         $items  = $CI->orderitems->group($num);
         $result = array();
-        $i = 0;
+        $i      = 0;
         if (count($items) > 0) {
             foreach ($items as $item) {
-                $menu = $CI->menu->get($item->item);
-                $result[$i++] =  array('code' => $menu->name, 'quantity' => $item->quantity );
+                $menu         = $CI->menu->get($item->item);
+                $result[$i++] = array('code' => $menu->name, 'quantity' => $item->quantity);
             }
         }
-        
+
         return $result;
     }
 
     // cancel an order
     public function flush($num)
     {
+        $CI = &get_instance();
+
+        $items = $CI->orderitems->group($num);
+
+        if (count($items) > 0) {
+            foreach ($items as $item) {
+                $CI->orderitems->delete($item);
+            }
+        }
 
     }
 
     // validate an order
     // it must have at least one item from each category
-    function validate($num) {
-        $CI = & get_instance();
+    public function validate($num)
+    {
+        $CI    = &get_instance();
         $items = $CI->orderitems->group($num);
         $gotem = array();
-        if(count($items) > 0)
-           foreach($items as $item){
-                $menu = $CI->menu->get($item->item);
+        if (count($items) > 0) {
+            foreach ($items as $item) {
+                $menu                   = $CI->menu->get($item->item);
                 $gotem[$menu->category] = 1;
-           } 
-        
+            }
+        }
+
         return isset($gotem['m']) && isset($gotem['d']) && isset($gotem['s']);
     }
 
