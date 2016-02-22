@@ -50,7 +50,18 @@ class Orders extends MY_Model
     // retrieve the details for an order
     public function details($num)
     {
+        $CI     = &get_instance();
+        $items  = $CI->orderitems->group($num);
+        $result = array();
+        $i = 0;
+        if (count($items) > 0) {
+            foreach ($items as $item) {
+                $menu = $CI->menu->get($item->item);
+                $result[$i++] =  array('code' => $menu->name, 'quantity' => $item->quantity );
+            }
+        }
         
+        return $result;
     }
 
     // cancel an order

@@ -49,8 +49,8 @@ class Order extends Application
 
         $this->data['order_num'] = $order_num;
 
-        $this->data['title'] = "Order # "
-        . ' (' . number_format($this->orders->total($order_num), 2) . ')';
+        $this->data['title'] = "Order # " . $order_num
+        . ' ($' . number_format($this->orders->total($order_num), 2) . ')';
 
         // Make the columns
         $this->data['meals']  = $this->make_column('m');
@@ -102,8 +102,13 @@ class Order extends Application
     public function checkout($order_num)
     {
         $this->data['title']     = 'Checking Out';
+        
         $this->data['pagebody']  = 'show_order';
+        
         $this->data['order_num'] = $order_num;
+        
+        $this->data['total'] = '$' . number_format($this->orders->total($order_num), 2);
+        
         $this->data['items'] = $this->orders->details($order_num);
 
         $this->render();
